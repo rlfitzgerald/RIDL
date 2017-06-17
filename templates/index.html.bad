@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <title> Cyberdyne Corporation is proud to present .. Aerobot ..</title>
+  <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
+  <script type="text/javascript" src="//cdn.plot.ly/plotly-latest.min.js"></script>
+ <style>
+    .defaultTextBox {
+        height: auto;
+	      width:600px;
+        position: relative;
+        left: 100;
+   	    padding: 50px;
+	       outline: 10px;
+        border: 2px solid green;
+        background-color: white;
+        font-size: 18px;
+        margin: 50px auto;
+        word-wrap: break-word;
+	     }
+
+    .idivstyle {
+	     position: relative;
+       margin: 0 auto;
+    }
+    div.bigdiv {margin-bottom: 25;}
+ </style>
+ <script type="text/javascript" charset="utf-8">
+
+ $(document).ready(function() {
+           // Use a "/test" namespace.
+           // An application can open a connection on multiple namespaces, and
+           // Socket.IO will multiplex all those connections on a single
+           // physical channel. If you don't care about multiple channels, you
+           // can set the namespace to an empty string.
+           namespace = '/test';
+
+           // Connect to the Socket.IO server.
+           // The connection URL has the following format:
+           //     http[s]://<domain>:<port>[/<namespace>]
+           var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+
+           // Event handler for new connections.
+           // The callback function is invoked when a connection with the
+           // server is established.
+           socket.on('connect', function() {
+               socket.emit('my_event', {data: 'I\'m connected!'});
+           });
+
+           // Event handler for server sent data.
+           // The callback function is invoked whenever the server emits data
+           // to the client. The data is then displayed in the "Received"
+           // section of the page.
+           socket.on('my_response', function(msg) {
+               //$('#log').append('<br>' + $('<div/>').text('Received #' + msg.count + ': ' + msg.data).html());
+     socket.emit("testtest",{data:'Im connected'})
+             });
+
+
+     socket.on('refresh',function(msg) {
+               $('#log').append("refresh").html();
+         socket.emit("testtest",{data:'refresh connected'})
+
+      });
+
+     socket.on('gen_map',function(msg) {
+        var bigdiv = document.getElementById('bigdiv')
+        var data = msg.data
+        var iframe = document.createElement('iframe')
+        var idiv = document.createElement('div')
+        iframe.srcdoc = data
+        iframe.width = "900"
+        iframe.height = "741"
+        iframe.frameborder="10"
+        iframe.marginheight="20"
+        idiv.className = "idivstyle"
+        idiv.classname="defaultTextBox"
+        idiv.appendChild(iframe)
+        bigdiv.insertBefore(idiv,bigdiv.firstChild)
+   }
+            );
+
+    socket.on("gen_text",function(msg) {
+       var idiv = document.createElement('div')
+       idiv.className = "defaultTextBox"
+       idiv.innerHTML="<p>"+msg.data+"</p>"
+      bigdiv.insertBefore(idiv,bigdiv.firstChild)
+   }
+      );
+
+
+     socket.on("removediv",function(msg) {
+       size_div = document.getElementById("bigdiv").children.length;
+       bigdiv = document.getElementById("bigdiv")
+       lastc = bigdiv.lastChild;
+       bigdiv.removeChild(lastc)
+    }
+     );
+
+     socket.on('addplotly', function(msg) {
+       //var div = document.createElement('div')
+       // div.id = 'fooooo'
+      var bigdiv = document.getElementById('bigdiv')
+      var thediv = document.createElement('div')
+      thediv.innerHTML = msg.data
+      //
+      // divide the msg into a div and a script
+      var divdiv = thediv.getElementsByTagName('div')
+      divdiv.width="1000"
+      divdiv.height="600"
+      bigdiv.(divdiv[0])
+      var arr = thediv.getElementsByTagName('script')
+      for (var n = 0; n<arr.length;n++) {
+          eval(arr[n].innerHTML) }
+      });
+
+   $('form#disconnect').submit(function(event) {
+               socket.emit('disconnect_request');
+               return false;
+           });
+       });
+ </script>
+
+
+
+
+
+
+</head>
+<body>
+<div class="jumbotron text-center">
+  <h1>R.I.L.D.</h1>
+</div>
+<div class ="container">
+  <div class = "row">
+    <div id = "bigdiv"> </div>
+    </div>
+  </div>
+</body>
+</html>
