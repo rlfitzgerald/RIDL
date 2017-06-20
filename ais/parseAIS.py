@@ -22,6 +22,7 @@ def parseAIS(inputFile):
         refParts = ref.split('/')
         x = 0
         y = 0
+        registry = ''
         for part in refParts:
             if "centerx" in part:
                 xpart = part.split(':')
