@@ -8,7 +8,7 @@ def parseAIS(inputFile):
     table = soup.find_all('td')
     tableSoup = bs(str(table), 'html.parser')
     tableLinks = tableSoup.find_all('a')
-    
+
     tableRef = []
     for link in tableLinks:
         ref = link.get('href')
@@ -37,9 +37,24 @@ def parseAIS(inputFile):
                 x = 0
                 y = 0
     
+    
+        
+    #Parse Registries
+    regs = []
+    images = tableSoup.find_all('img')
+    imageSoup = bs(str(images), 'html.parser')
+    imageText = str(imageSoup)
+    imageParts = imageText.split(" ")
+    
+    for part in imageParts:
+        if "alt=" in part:
+            tempPart = part.split("=")
+            if tempPart[1].isupper():
+                regs.append(tempPart[1])
+    
     #print "coordinates:"
     #print coordinates 
-    return coordinates
+    return coordinates, regs
 
 
 '''
